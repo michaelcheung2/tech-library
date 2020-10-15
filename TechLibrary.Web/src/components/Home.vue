@@ -1,20 +1,29 @@
 <template>
-    <div class="home">
-        <h1>{{ msg }}</h1>
+    <div>
+        <div>
+            <b-button variant="primary" @click="previousClick();">Previous</b-button>
+            <span style="padding:5px;"></span>
+            <b-button variant="primary" @click="nextClick();">Next</b-button>
+        </div>
+        <div class="home">
+            <h1>{{ msg }}</h1>
 
-        <b-table striped hover :items="dataContext" :fields="fields" responsive="sm">
-            <template v-slot:cell(thumbnailUrl)="data">
-                <b-img :src="data.value" thumbnail fluid></b-img>
-            </template>
-            <template v-slot:cell(title_link)="data">
-                <b-link :to="{ name: 'book_view', params: { 'id' : data.item.bookId } }">{{ data.item.title }}</b-link>
-            </template>
-        </b-table>
+            <b-table striped hover :items="results" :fields="fields" responsive="sm">
+                <template v-slot:cell(thumbnailUrl)="data">
+                    <b-img :src="data.value" thumbnail fluid></b-img>
+                </template>
+                <template v-slot:cell(title_link)="data">
+                    <b-link :to="{ name: 'book_view', params: { 'id' : data.item.bookId } }">{{ data.item.title }}</b-link>
+                </template>
+            </b-table>
+        </div>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
+
+    const BASE_URL = 'https://localhost:5001';
 
     export default {
         name: 'Home',
@@ -29,17 +38,39 @@
                 { key: 'descr', label: 'Description', sortable: true, sortDirection: 'desc' }
 
             ],
-            items: []
+            items: [],
+            currentOffset: 0,
+            results: []
         }),
-        
+
+        mounted() {
+            this.dataContext();
+        },
+
         methods: {
-            dataContext(ctx, callback) {
-                axios.get("https://localhost:5001/books")
+            dataContext() {
+                axios.get(BASE_URL + "/books")
                     .then(response => {
-                        
-                        callback(response.data);
+                        this.results = response.data;
                     });
-            }
+            },
+            previousClick: function () {
+                if (this.currentOffset >= 10) {
+                    this.currentOffset = this.currentOffset - 10;
+                }
+                axios.get(BASE_URL + "/books?currentOffset=" + this.currentOffset)
+                    .then(response => {
+                        this.results = response.data;
+                    });
+            },
+            nextClick: function () {
+                this.currentOffset = this.currentOffset + 10;
+                axios.get(BASE_URL + "/books?currentOffset=" + this.currentOffset)
+                    .then(response => {
+                        this.results = response.data;
+                    });
+            },
+
         }
     };
 </script>
