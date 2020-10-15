@@ -1,14 +1,19 @@
 <template>
     <div>
         <div>
-            <b-button variant="primary" @click="previousClick();">Previous</b-button>
-            <span style="padding:5px;"></span>
-            <b-button variant="primary" @click="nextClick();">Next</b-button>
+            <b-input-group>
+                <b-button variant="primary" @click="previousClick();">Previous</b-button>
+                <span style="padding:5px;"></span>
+                <b-button variant="primary" @click="nextClick();">Next</b-button>
+                <span style="padding:20px;"></span>
+                <b-input id="searchInput" placeholder="Search title/desc"></b-input>
+                <b-button variant="primary" @click="searchClick();">Search</b-button>
+            </b-input-group>
         </div>
         <div class="home">
             <h1>{{ msg }}</h1>
 
-            <b-table striped hover :items="results" :fields="fields" responsive="sm">
+            <b-table striped hover :items="items" :fields="fields" responsive="sm">
                 <template v-slot:cell(thumbnailUrl)="data">
                     <b-img :src="data.value" thumbnail fluid></b-img>
                 </template>
@@ -40,7 +45,7 @@
             ],
             items: [],
             currentOffset: 0,
-            results: []
+            searchInput: ''
         }),
 
         mounted() {
@@ -51,7 +56,7 @@
             dataContext() {
                 axios.get(BASE_URL + "/books")
                     .then(response => {
-                        this.results = response.data;
+                        this.items = response.data;
                     });
             },
             previousClick: function () {
@@ -60,14 +65,21 @@
                 }
                 axios.get(BASE_URL + "/books?currentOffset=" + this.currentOffset)
                     .then(response => {
-                        this.results = response.data;
+                        this.items = response.data;
                     });
             },
             nextClick: function () {
                 this.currentOffset = this.currentOffset + 10;
                 axios.get(BASE_URL + "/books?currentOffset=" + this.currentOffset)
                     .then(response => {
-                        this.results = response.data;
+                        this.items = response.data;
+                    });
+            },
+            searchClick: function () {
+                let inputText = document.getElementById('searchInput').value;
+                axios.get(BASE_URL + "/books?currentOffset=" + this.currentOffset + "&search=" + inputText)
+                    .then(response => {
+                        this.items = response.data;
                     });
             },
 

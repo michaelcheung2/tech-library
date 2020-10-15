@@ -7,6 +7,7 @@ using TechLibrary.Domain;
 using TechLibrary.Models;
 using TechLibrary.Services;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace TechLibrary.Controllers
 {
@@ -27,13 +28,22 @@ namespace TechLibrary.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(int currentOffset)
+        public async Task<IActionResult> GetAll(int currentOffset, string search)
         {
             _logger.LogInformation("Get all books");
 
             var books = await _bookService.GetBooksAsync();
 
             books = books.Skip(currentOffset).Take(RESULTS_PER_PAGE).ToList();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                search = search.ToLower();
+
+                var filteredBooks = books.Where(x => x.Title.ToLower().Contains(search) || (x.ShortDescr?.ToLower().Contains(search) == true));
+
+                books = (!filteredBooks.Count().Equals(0)) ? filteredBooks.ToList() : null;
+            }
 
             var bookResponse = _mapper.Map<List<BookResponse>>(books);
 
