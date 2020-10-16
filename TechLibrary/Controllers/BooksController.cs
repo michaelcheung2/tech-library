@@ -61,5 +61,17 @@ namespace TechLibrary.Controllers
 
             return Ok(bookResponse);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> SaveDescription(int id, [FromBody] BookRequest bookRequest)
+        {
+            _logger.LogInformation($"Update book description by id {id}");
+
+            var book = await _bookService.SaveBookDescriptionAsync(id, bookRequest.Descr);
+
+            var bookResponse = _mapper.Map<BookResponse>(book);
+
+            return Ok(bookResponse);
+        }
     }
 }
