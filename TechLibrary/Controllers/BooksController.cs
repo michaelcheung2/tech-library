@@ -34,8 +34,6 @@ namespace TechLibrary.Controllers
 
             var books = await _bookService.GetBooksAsync();
 
-            books = books.Skip(currentOffset).Take(RESULTS_PER_PAGE).ToList();
-
             if (!string.IsNullOrWhiteSpace(search))
             {
                 search = search.ToLower();
@@ -44,6 +42,8 @@ namespace TechLibrary.Controllers
 
                 books = (!filteredBooks.Count().Equals(0)) ? filteredBooks.ToList() : null;
             }
+
+            books = books.Skip(currentOffset).Take(RESULTS_PER_PAGE).ToList();
 
             var bookResponse = _mapper.Map<List<BookResponse>>(books);
 
@@ -63,11 +63,31 @@ namespace TechLibrary.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> SaveDescription(int id, [FromBody] BookRequest bookRequest)
+        public async Task<IActionResult> SaveDescription(int id, [FromBody] UpdateBookRequest bookRequest)
         {
             _logger.LogInformation($"Update book description by id {id}");
 
             var book = await _bookService.SaveBookDescriptionAsync(id, bookRequest.Descr);
+
+            var bookResponse = _mapper.Map<BookResponse>(book);
+
+            return Ok(bookResponse);
+        }
+
+        [HttpPost("create-book")]
+        public async Task<IActionResult> CreateNewBook([FromBody] BookRequest bookRequest)
+        {
+            _logger.LogInformation("Create a new book");
+
+            var newBook = new Book()
+            {
+                Title = bookRequest.Title,
+                ISBN = bookRequest.ISBN,
+                ThumbnailUrl = bookRequest.ImageUrl,
+                ShortDescr = bookRequest.Description
+            };
+
+            var book = await _bookService.CreateNewBookAsync(newBook);
 
             var bookResponse = _mapper.Map<BookResponse>(book);
 

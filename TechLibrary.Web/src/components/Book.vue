@@ -8,16 +8,11 @@
                 style="max-width: 30rem;"
                 class="mb-2">
             <b-button variant="primary" @click="toggleEditMode();" v-if="!isHidden">Edit</b-button>
-            <b-button variant="primary" @click="saveDescription();" v-if="isHidden">Save</b-button>
+            <b-button variant="outline-primary" @click="saveDescription();" v-if="isHidden">Save</b-button>
             <b-card-text v-if="!isHidden">
                 {{ book.descr }}
             </b-card-text>
-            <b-form-textarea id="bookDescription"
-                             v-model="book.descr"
-                             max-rows="10"
-                             v-if="isHidden">
-            </b-form-textarea>
-
+            <b-form-textarea id="bookDescription" v-model="book.descr" max-rows="10" v-if="isHidden"></b-form-textarea>
             <b-button to="/" variant="primary">Back</b-button>
         </b-card>
     </div>

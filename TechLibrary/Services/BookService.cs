@@ -14,6 +14,7 @@ namespace TechLibrary.Services
         Task<List<Book>> GetBooksAsync();
         Task<Book> GetBookByIdAsync(int bookid);
         Task<Book> SaveBookDescriptionAsync(int bookId, string description);
+        Task<Book> CreateNewBookAsync(Book newBook);
     }
 
     public class BookService : IBookService
@@ -43,6 +44,13 @@ namespace TechLibrary.Services
             book.ShortDescr = description;
             await _dataContext.SaveChangesAsync();
             return book;
+        }
+
+        public async Task<Book> CreateNewBookAsync(Book newBook)
+        {
+            _dataContext.Books.Add(newBook);
+            await _dataContext.SaveChangesAsync();
+            return newBook;
         }
     }
 }

@@ -8,6 +8,8 @@
                 <span style="padding:20px;"></span>
                 <b-input id="searchInput" placeholder="Search title/desc"></b-input>
                 <b-button variant="primary" @click="searchClick();">Search</b-button>
+                <span style="padding:5px;"></span>
+                <b-button variant="success" to="/create-book">Create Book</b-button>
             </b-input-group>
         </div>
         <div class="home">
