@@ -56,7 +56,7 @@
 
         methods: {
             dataContext() {
-                axios.get(BASE_URL + "/books")
+                axios.get(`${BASE_URL}/books`)
                     .then(response => {
                         this.items = response.data;
                     });
@@ -65,21 +65,21 @@
                 if (this.currentOffset >= 10) {
                     this.currentOffset = this.currentOffset - 10;
                 }
-                axios.get(BASE_URL + "/books?currentOffset=" + this.currentOffset)
+                axios.get(`${BASE_URL}/books?currentOffset=${this.currentOffset}`)
                     .then(response => {
                         this.items = response.data;
                     });
             },
             nextClick: function () {
                 this.currentOffset = this.currentOffset + 10;
-                axios.get(BASE_URL + "/books?currentOffset=" + this.currentOffset)
+                axios.get(`${BASE_URL}/books?currentOffset=${this.currentOffset}`)
                     .then(response => {
                         this.items = response.data;
                     });
             },
             searchClick: function () {
                 let inputText = document.getElementById('searchInput').value;
-                axios.get(BASE_URL + "/books?currentOffset=" + this.currentOffset + "&search=" + inputText)
+                axios.get(`${BASE_URL}/books?currentOffset=${this.currentOffset}&search="${inputText}`)
                     .then(response => {
                         this.items = response.data;
                     });
